@@ -8,31 +8,36 @@ import mapSvg from "./assets/map.svg";
 import phoneSvg from "./assets/phone.svg";
 import padlockSvg from "./assets/padlock.svg";
 import cwSvg from "./assets/cw.svg";
-import Footer from "./components/footer/Footer";
 import axios from "axios";
-
+import Adduser from "./Adduser";
 
 const defaultImage = "https://randomuser.me/api/portraits/men/75.jpg";
 
 function App() {
+  const [user, setUser] = useState([]);
 
-  const [user, setUser] = useState("")
-
-  const getUser = async()=>{
+  const getusers = async () => {
     const url = "https://randomuser.me/api/";
     try {
-     const {data} =  await axios(url);
-     console.log(data.results[0])
-     setUser(data.results[0]);
+      const { data } = await axios(url);
+      // console.log(data.results[0]);
+      setUser(data.results[0]);
     } catch (error) {
       console.log(error);
     }
-  }
- useEffect(() => {
-   getUser()
- }, [])
- 
-const{id,picture,email,name,phone,location,dob} = user
+  };
+
+  useEffect(() => {
+    getusers();
+  }, []);
+
+  const { picture, email, name, phone, location, dob } = user;
+  console.log(user);
+
+  const [changeuser, setChangeuser] = useState([name]);
+
+  console.log(changeuser);
+
   return (
     <main>
       <div className="block bcg-orange">
@@ -41,30 +46,54 @@ const{id,picture,email,name,phone,location,dob} = user
       <div className="block">
         <div className="container">
           <img src={picture?.large} alt="random user" className="user-img" />
-          <p className="user-title">My ... is</p>
+          <p className="user-title">My {changeuser} is</p>
           <p className="user-value"></p>
           <div className="values-list">
-            <button onClick={(e)=>} className="icon" data-label="name">
+            <button
+              className="icon"
+              data-label="name"
+              onClick={() => setChangeuser("name")}
+            >
               <img src={womanSvg} alt="user" id="iconImg" />
             </button>
-            <button className="icon" data-label="email">
+            <button
+              className="icon"
+              data-label="email"
+              onClick={() => setChangeuser("email")}
+            >
               <img src={mailSvg} alt="mail" id="iconImg" />
             </button>
-            <button className="icon" data-label="age">
+            <button
+              className="icon"
+              data-label="age"
+              onClick={() => setChangeuser("age")}
+            >
               <img src={womanAgeSvg} alt="age" id="iconImg" />
             </button>
-            <button className="icon" data-label="street">
+            <button
+              className="icon"
+              data-label="street"
+              onClick={() => setChangeuser("street")}
+            >
               <img src={mapSvg} alt="map" id="iconImg" />
             </button>
-            <button className="icon" data-label="phone">
+            <button
+              className="icon"
+              data-label="phone"
+              onClick={() => setChangeuser("phone")}
+            >
               <img src={phoneSvg} alt="phone" id="iconImg" />
             </button>
-            <button className="icon" data-label="password">
+            <button
+              className="icon"
+              data-label="password"
+              onClick={() => setChangeuser("password")}
+            >
               <img src={padlockSvg} alt="lock" id="iconImg" />
             </button>
           </div>
           <div className="btn-group">
-            <button className="btn" type="button">
+            <button className="btn" type="button" onClick={() => getusers()}>
               new user
             </button>
             <button className="btn" type="button">
@@ -82,13 +111,13 @@ const{id,picture,email,name,phone,location,dob} = user
               </tr>
             </thead>
             <tbody>
-              <tr className="body-tr"></tr>
+              <tr className="body-tr">{<Adduser user={user} />}</tr>
             </tbody>
           </table>
         </div>
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Footer />
+       
       </div>
     </main>
   );
