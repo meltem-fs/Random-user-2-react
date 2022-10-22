@@ -9,7 +9,6 @@ import phoneSvg from "./assets/phone.svg";
 import padlockSvg from "./assets/padlock.svg";
 import cwSvg from "./assets/cw.svg";
 import axios from "axios";
-import Adduser from "./Adduser";
 
 const defaultImage = "https://randomuser.me/api/portraits/men/75.jpg";
 
@@ -20,7 +19,7 @@ function App() {
     const url = "https://randomuser.me/api/";
     try {
       const { data } = await axios(url);
-      // console.log(data.results[0]);
+      console.log(data);
       setUser(data.results[0]);
     } catch (error) {
       console.log(error);
@@ -31,12 +30,26 @@ function App() {
     getusers();
   }, []);
 
-  const { picture, email, name, phone, location, dob } = user;
+  const { picture, email, name, phone, location, dob ,login,gender} = user;
   console.log(user);
 
-  const [changeuser, setChangeuser] = useState([name]);
+  const [changeuser, setChangeuser] = useState(["name"]);
 
   console.log(changeuser);
+
+
+  const dataConfigure = {
+    name: `${name?.first} ${name?.last}`,
+    email,
+    age:dob?.age,
+    country:location?.country,
+    phone,
+    password:login?.password
+  }
+
+  const [add, setAdd] = useState([])
+
+
 
   return (
     <main>
@@ -47,14 +60,14 @@ function App() {
         <div className="container">
           <img src={picture?.large} alt="random user" className="user-img" />
           <p className="user-title">My {changeuser} is</p>
-          <p className="user-value"></p>
+          <p className="user-value"> {dataConfigure[changeuser]} </p>
           <div className="values-list">
             <button
               className="icon"
               data-label="name"
               onClick={() => setChangeuser("name")}
             >
-              <img src={womanSvg} alt="user" id="iconImg" />
+              <img src={gender == "female" ? womanSvg : manSvg} alt="user" id="iconImg" />
             </button>
             <button
               className="icon"
@@ -68,12 +81,12 @@ function App() {
               data-label="age"
               onClick={() => setChangeuser("age")}
             >
-              <img src={womanAgeSvg} alt="age" id="iconImg" />
+              <img src={gender=="female" ? womanAgeSvg : manAgeSvg} alt="age" id="iconImg" />
             </button>
             <button
               className="icon"
               data-label="street"
-              onClick={() => setChangeuser("street")}
+              onClick={() => setChangeuser("country")}
             >
               <img src={mapSvg} alt="map" id="iconImg" />
             </button>
@@ -93,10 +106,18 @@ function App() {
             </button>
           </div>
           <div className="btn-group">
-            <button className="btn" type="button" onClick={() => getusers()}>
+            <button
+              className="btn"
+              type="button"
+              onClick={() => getusers(dataConfigure.name)}
+            >
               new user
             </button>
-            <button className="btn" type="button">
+            <button
+              className="btn"
+              type="button"
+              onClick={() => setAdd([...add].includes(user) ? [...add] : [...add,user]  )}
+            >
               add user
             </button>
           </div>
@@ -111,14 +132,21 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              <tr className="body-tr">{<Adduser user={user} />}</tr>
+              {add?.map((item) => (
+                <tr className="body-tr">
+                  <td className="th">
+                    {item.name?.first} {item.name?.last}
+                  </td>
+                  <td className="th">{item?.email}</td>
+                  <td className="th">{item?.phone}</td>
+                  <td className="th">{item.dob?.age}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-       
-      </div>
+      <div style={{ display: "flex", justifyContent: "center" }}></div>
     </main>
   );
 }
